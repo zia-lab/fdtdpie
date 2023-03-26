@@ -1,2 +1,3 @@
-# fdtdpie
-A barebones implementation of FDTD
+# FDTDpie
+
+A barebones implementation of FDTD.
