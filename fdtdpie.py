@@ -15,13 +15,11 @@ class FD1Dfree():
     sim_params : dict
         Dictionary containing the following simulation parameters
         T : float
-            Total simulation time in seconds
+            Total simulation time in units of μm/c.
         L : float
-            Length of the simulation domain in um
-        c : float
-            Speed of light in um/ps
+            Length of the simulation domain in μm
         dx : float
-            Spatial resolution in um
+            Spatial resolution in μm
         Jsource : function
             Source function for the electric current density
         boundary : str
@@ -30,7 +28,7 @@ class FD1Dfree():
     def __init__(self, sim_params):
         self.T  = sim_params['T']
         self.L  = sim_params['L']
-        self.c  = sim_params['c']
+        self.c  = 1.
         self.dx = sim_params['dx']
         self.Jsource = sim_params['Jsource']
         self.boundary = sim_params['boundary']
@@ -120,7 +118,7 @@ class FD1Dfree():
             # determine the contribution to the change in Ey
             delta                = -self.cNum * Hzgradient
             # add the source term
-            delta     += -self.dt * self.Jsource(self.xcoords_Ey, self.t)
+            delta               += -self.dt * self.Jsource(self.xcoords_Ey, self.t)
             self.yeeNext[::2]    = self.yeePrev[::2] + delta
 
             # update Hz
@@ -141,6 +139,9 @@ class FD1Dfree():
         print("Simulation complete")
 
     def run(self):
+        '''
+        Run the simulation.
+        '''
         if self.boundary == 'metallic':
             self.run_metallic()
         elif self.boundary == 'periodic':
@@ -166,8 +167,7 @@ class FD1Dfree():
         '''
         Plots the requested field or fields.
         '''
-        extent   = [-self.L/2, self.L/2, 
-                        0, self.N*self.dt]
+        extent   = [-self.L/2, self.L/2, 0, self.N*self.dt]
         if type(plotField) == str:
             plotData = self.get_field_history(plotField)
             minF = np.min(plotData)
@@ -211,7 +211,7 @@ class FD1Dfree():
         else:
             raise ValueError("Invalid field to plot. It should be either a single string or a list of strings.")
 
-class FD1Dvarep():
+class FD1D():
     '''
     1D FDTD with variable epsilon
 
@@ -220,13 +220,11 @@ class FD1Dvarep():
     sim_params : dict
         Dictionary containing the following simulation parameters
         T : float
-            Total simulation time in seconds
+            Total simulation time in in units of μm/c
         L : float
-            Length of the simulation domain in um
-        c : float
-            Speed of light in um/ps
+            Length of the simulation domain in μm
         dx : float
-            Spatial resolution in um
+            Spatial resolution in μm
         Jsource : function
             Source function for the electric current density
         epsilonFun: function
@@ -237,7 +235,7 @@ class FD1Dvarep():
     def __init__(self, sim_params):
         self.T  = sim_params['T']
         self.L  = sim_params['L']
-        self.c  = sim_params['c']
+        self.c  = 1.
         self.dx = sim_params['dx']
         self.Jsource = sim_params['Jsource']
         self.boundary = sim_params['boundary']
@@ -354,6 +352,9 @@ class FD1Dvarep():
         print("Simulation complete")
 
     def run(self):
+        '''
+        Run the simulation.
+        '''
         if self.boundary == 'metallic':
             self.run_metallic()
         elif self.boundary == 'periodic':
